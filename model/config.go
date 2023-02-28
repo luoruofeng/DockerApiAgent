@@ -35,6 +35,7 @@ func CreateConfig(configFile string) {
 
 type Config struct {
 	LogLevel          string `json:"log_level"`
+	LogFile           string `json:"log_file"`
 	HttpAddr          string `json:"http_addr"`
 	UnixFile          string `json:"unix_file"`
 	ServiceName       string `json:"service_name"`

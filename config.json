@@ -1,5 +1,6 @@
 {
     "log_level":"INFO",
+    "log_file":"./logs",
     "http_addr":"0.0.0.0:8888",
     "unix_file":"/var/run/docker.sock",
     "service_name":"DockerApiAgent",

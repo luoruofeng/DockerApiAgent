@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/luoruofeng/DockerApiAgent/model"
-	"github.com/luoruofeng/DockerApiAgent/util"
 	"go.uber.org/zap"
 )
 
@@ -17,7 +16,7 @@ func AgentFunc(c *http.Client, logger *zap.Logger) http.HandlerFunc {
 		r.RequestURI = ""
 		r.URL.Scheme = "http"
 		r.URL.Host = "localhost"
-		util.LogInfo(logger, fmt.Sprintf("request docker api. request parameter:%v", r))
+		logger.Info(fmt.Sprintf("request docker api. request parameter:%v", r))
 		resp, err := c.Do(r)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

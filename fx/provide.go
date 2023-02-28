@@ -2,6 +2,7 @@ package fx
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
 	"net/http"
@@ -11,23 +12,46 @@ import (
 	"github.com/luoruofeng/DockerApiAgent/model"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger() (*zap.Logger, error) {
-	logLevel := zap.NewAtomicLevel()
-	if err := logLevel.UnmarshalText([]byte(model.Cnf.LogLevel)); err != nil {
-		return nil, fmt.Errorf("failed to unmarshal log level: %s", err)
-	}
+func NewLogger(lc fx.Lifecycle) (*zap.Logger, error) {
 	var logger *zap.Logger
 	var err error
 	if model.Cnf.IsProduction {
-		logger, err = zap.NewProduction()
+		rawJSON := []byte(`{
+			"level": "` + model.Cnf.LogLevel + `",
+			"encoding": "json",
+			"outputPaths": ["stdout", "` + model.Cnf.LogFile + `"],
+			"errorOutputPaths": ["stderr"],
+			"initialFields": {"service-name":"` + model.Cnf.ServiceName + `"},
+			"encoderConfig": {
+			  "messageKey": "message",
+			  "levelKey": "level",
+			  "levelEncoder": "lowercase",
+			  "TimeKey":"time"
+			}
+		  }`)
+
+		var cfg zap.Config
+		if err := json.Unmarshal(rawJSON, &cfg); err != nil {
+			panic(err)
+		}
+		cfg.EncoderConfig.EncodeTime = zapcore.ISO8601TimeEncoder
+		logger = zap.Must(cfg.Build())
 	} else {
-		logger, err = zap.NewDevelopment(zap.IncreaseLevel(logLevel))
+		logger, err = zap.NewDevelopment()
 	}
 	if err != nil {
 		return nil, fmt.Errorf("failed to create logger: %s", err)
 	}
+	lc.Append(fx.Hook{
+		OnStop: func(context.Context) error {
+			logger.Info("logger sync")
+			defer logger.Sync()
+			return nil
+		},
+	})
 	return logger, nil
 }
 
