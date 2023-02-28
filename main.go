@@ -1,51 +1,54 @@
+/*
+Copyright © 2023 luoruofeng
+*/
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
-	"net"
 	"context"
-	"net/http"
+	"flag"
+	"log"
+	"time"
+
+	f "github.com/luoruofeng/DockerApiAgent/fx"
+	"github.com/luoruofeng/DockerApiAgent/model"
+
+	"go.uber.org/fx"
+)
+
+var (
+	config model.Config
 )
 
 func main() {
-	// 创建 HTTP 客户端
-	transport := &http.Transport{
-		DialContext: func(ctx context.Context, network, addr string) (net.Conn, error) {
-			return net.Dial("unix", "/var/run/docker.sock")
-		},
-	}
-	client := &http.Client{Transport: transport}
 
-	// 创建代理服务器
-	proxy := &http.Server{
-		Addr: ":8888",
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			// 将请求转发到目标 HTTP 客户端
-			r.RequestURI = ""
-			r.URL.Scheme = "http"
-			r.URL.Host = "localhost"
-			resp, err := client.Do(r)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			defer resp.Body.Close()
+	// 定义命令行参数
+	configFile := *flag.String("config", "config.json", "configuration file")
+	flag.Parse()
 
-			// 将响应正文返回给客户端
-			body, err := ioutil.ReadAll(resp.Body)
-			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			w.Write(body)
-		}),
+	model.CreateConfig(configFile)
+
+	app := fx.New(
+		fx.Provide(
+			f.NewLogger,
+			f.NewMux,
+			f.NewClient,
+		),
+		fx.Invoke(f.Register, f.RegisterLog),
+	)
+
+	startCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if err := app.Start(startCtx); err != nil {
+		log.Fatal(err)
 	}
 
-	// 启动代理服务器
-	fmt.Println("Proxy listening on", proxy.Addr)
-	if err := proxy.ListenAndServe(); err != nil {
-		panic(err)
+	// Normally, we'd block here with <-app.Done(). Instead, we'll make an HTTP
+	// request to demonstrate that our server is running.
+	<-app.Done()
+	stopCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if err := app.Stop(stopCtx); err != nil {
+		log.Fatal(err)
 	}
+
 }
-

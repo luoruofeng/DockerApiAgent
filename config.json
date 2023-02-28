@@ -1,0 +1,10 @@
+{
+    "log_level":"INFO",
+    "http_addr":"0.0.0.0:8888",
+    "unix_file":"/var/run/docker.sock",
+    "service_name":"DockerApiAgent",
+    "http_read_over_time":15,
+    "http_write_over_time":15,
+    "agent_path_prefix": "/docker",
+    "is_production":false
+}
