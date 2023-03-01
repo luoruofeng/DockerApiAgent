@@ -9,11 +9,30 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/luoruofeng/DockerApiAgent/consul"
 	"github.com/luoruofeng/DockerApiAgent/model"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
+
+func NewServiceInstance(lc fx.Lifecycle, logger *zap.Logger) (consul.ServiceInstance, error) {
+	si, err := consul.NewServiceInstance(model.Cnf.ConsulAddr, logger)
+	if err != nil {
+		return nil, err
+	}
+	lc.Append(fx.Hook{
+		OnStart: func(context.Context) error {
+			return nil
+		},
+		OnStop: func(context.Context) error {
+			logger.Sugar().Infof("Consul deregister service: %v", model.Cnf.ServiceName)
+			return si.DeregisterConsul(model.Cnf.ServiceName)
+		},
+	})
+	fmt.Println(si)
+	return si, nil
+}
 
 func NewLogger(lc fx.Lifecycle) (*zap.Logger, error) {
 	var logger *zap.Logger
@@ -43,11 +62,11 @@ func NewLogger(lc fx.Lifecycle) (*zap.Logger, error) {
 		logger, err = zap.NewDevelopment()
 	}
 	if err != nil {
-		return nil, fmt.Errorf("failed to create logger: %s", err)
+		return nil, fmt.Errorf("Failed to create logger: %s", err)
 	}
 	lc.Append(fx.Hook{
 		OnStop: func(context.Context) error {
-			logger.Info("logger sync")
+			logger.Info("zap logger sync!")
 			defer logger.Sync()
 			return nil
 		},
@@ -78,7 +97,7 @@ func NewMux(lc fx.Lifecycle, logger *zap.Logger) *mux.Router {
 	}
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
-			logger.Info("Starting HTTP server.", zap.String("addr", server.Addr))
+			logger.Info("Starting HTTP server!", zap.String("addr", server.Addr))
 			ln, err := net.Listen("tcp", server.Addr)
 			if err != nil {
 				return err
@@ -87,7 +106,7 @@ func NewMux(lc fx.Lifecycle, logger *zap.Logger) *mux.Router {
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			logger.Info("Stopping HTTP server.")
+			logger.Info("Stopping HTTP server!")
 			return server.Shutdown(ctx)
 		},
 	})

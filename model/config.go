@@ -34,6 +34,8 @@ func CreateConfig(configFile string) {
 }
 
 type Config struct {
+	ConsulAddr        string `json:"consul_addr"`
+	NICName           string `json:"nic_name"`
 	LogLevel          string `json:"log_level"`
 	LogFile           string `json:"log_file"`
 	HttpAddr          string `json:"http_addr"`

@@ -29,11 +29,16 @@ func main() {
 
 	app := fx.New(
 		fx.Provide(
+			f.NewServiceInstance,
 			f.NewLogger,
 			f.NewMux,
 			f.NewClient,
 		),
-		fx.Invoke(f.Register, f.RegisterLog),
+		fx.Invoke(f.RegisterLog, f.RegisterConsul, f.RegisterHttp),
+		//use the same Zap logger for Fx's own logs as well.
+		// fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
+		// 	return &fxevent.ZapLogger{Logger: log}
+		// }),
 	)
 
 	startCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)

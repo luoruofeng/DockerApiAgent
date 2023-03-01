@@ -7,5 +7,7 @@
     "http_read_over_time":15,
     "http_write_over_time":15,
     "agent_path_prefix": "/docker",
-    "is_production":false
+    "is_production":false,
+    "consul_addr":"127.0.0.1:8500",
+    "nic_name":"eth0"
 }
