@@ -34,15 +34,19 @@ func CreateConfig(configFile string) {
 }
 
 type Config struct {
-	ConsulAddr        string `json:"consul_addr"`
-	NICName           string `json:"nic_name"`
-	LogLevel          string `json:"log_level"`
-	LogFile           string `json:"log_file"`
-	HttpAddr          string `json:"http_addr"`
-	UnixFile          string `json:"unix_file"`
-	ServiceName       string `json:"service_name"`
-	HttpReadOverTime  int    `json:"http_read_over_time"`
-	HttpWriteOverTime int    `json:"http_write_over_time"`
-	AgentPathPrefix   string `json:"agent_path_prefix"`
-	IsProduction      bool   `json:"is_production"`
+	ConsulAddr           string `json:"consul_addr"`
+	ConsulHealth         bool   `json:"consul_health"`
+	ConsulHealthInterval string `json:"consul_health_interval"`
+	ConsulHealthTimeout  string `json:"consul_health_timeout"`
+	ConsulHealthPort     string `json:"consul_health_port"`
+	NICName              string `json:"nic_name"`
+	LogLevel             string `json:"log_level"`
+	LogFile              string `json:"log_file"`
+	HttpAddr             string `json:"http_addr"`
+	UnixFile             string `json:"unix_file"`
+	ServiceName          string `json:"service_name"`
+	HttpReadOverTime     int    `json:"http_read_over_time"`
+	HttpWriteOverTime    int    `json:"http_write_over_time"`
+	AgentPathPrefix      string `json:"agent_path_prefix"`
+	IsProduction         bool   `json:"is_production"`
 }

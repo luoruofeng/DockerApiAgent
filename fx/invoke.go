@@ -2,6 +2,7 @@ package fx
 
 import (
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -28,10 +29,19 @@ func RegisterConsul(logger *zap.Logger, si consul.ServiceInstance) error {
 	if err != nil {
 		return err
 	}
+
+	hostname, _ := os.Hostname()
+
+	serviceip := util.GetIpByNICName(model.Cnf.NICName)
 	r := &consul.ServiceRegistration{
-		Name: model.Cnf.ServiceName,
-		Port: port,
-		Ip:   ip,
+		Name:           model.Cnf.ServiceName,
+		Id:             model.Cnf.ServiceName + hostname,
+		Port:           port,
+		Ip:             ip,
+		Health:         model.Cnf.ConsulHealth,
+		HealthInterval: model.Cnf.ConsulHealthInterval,
+		HealthTimeout:  model.Cnf.ConsulHealthTimeout,
+		HealthUrl:      "http://" + serviceip + ":" + model.Cnf.ConsulHealthPort + "/health",
 	}
 	err = si.RegisterConsul(r)
 	return err
@@ -40,4 +50,5 @@ func RegisterConsul(logger *zap.Logger, si consul.ServiceInstance) error {
 func RegisterHttp(mux *mux.Router, c *http.Client, logger *zap.Logger) {
 	logger.Info("Http register is running!")
 	mux.PathPrefix(model.Cnf.AgentPathPrefix + "/").Handler(handle.AgentFunc(c, logger))
+	mux.HandleFunc("/health", handle.Health)
 }

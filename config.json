@@ -9,5 +9,9 @@
     "agent_path_prefix": "/docker",
     "is_production":false,
     "consul_addr":"127.0.0.1:8500",
+    "consul_health":true,
+    "consul_health_interval":"6s",
+    "consul_health_timeout":"3s",
+    "consul_health_port":"8888",
     "nic_name":"eth0"
 }

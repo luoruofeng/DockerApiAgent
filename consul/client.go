@@ -6,10 +6,12 @@ type ClientManager interface {
 }
 
 func (i *serviceInstance) RegisterConsul(sr *ServiceRegistration) error {
-	err := i.agent.ServiceRegister(convertServiceRegistration(sr))
+	agentServiceRegistration := convertServiceRegistration(sr)
+	err := i.agent.ServiceRegister(agentServiceRegistration)
 	if err != nil {
 		return err
 	}
+	i.logger.Sugar().Infof("ServiceRegistration info:%v check:%v", agentServiceRegistration, agentServiceRegistration.Check)
 	return nil
 }
 

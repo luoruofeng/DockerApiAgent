@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -27,7 +28,8 @@ func NewServiceInstance(lc fx.Lifecycle, logger *zap.Logger) (consul.ServiceInst
 		},
 		OnStop: func(context.Context) error {
 			logger.Sugar().Infof("Consul deregister service: %v", model.Cnf.ServiceName)
-			return si.DeregisterConsul(model.Cnf.ServiceName)
+			hostname, _ := os.Hostname()
+			return si.DeregisterConsul(model.Cnf.ServiceName + hostname)
 		},
 	})
 	fmt.Println(si)
