@@ -24,6 +24,7 @@ require (
 	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/serf v0.10.1 // indirect
+	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.6 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
@@ -33,6 +34,8 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/spf13/cobra v1.6.1 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.16.1 // indirect
 	go.uber.org/multierr v1.6.0 // indirect

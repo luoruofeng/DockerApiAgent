@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/luoruofeng/DockerApiAgent/consul"
+	"github.com/luoruofeng/DockerApiAgent/docker/swarm"
 	"github.com/luoruofeng/DockerApiAgent/util"
 
 	"github.com/gorilla/mux"
@@ -51,4 +52,8 @@ func RegisterHttp(mux *mux.Router, c *http.Client, logger *zap.Logger) {
 	logger.Info("Http register is running!")
 	mux.PathPrefix(model.Cnf.AgentPathPrefix + "/").Handler(handle.AgentFunc(c, logger))
 	mux.HandleFunc("/health", handle.Health)
+}
+
+func RegisterSwarmManager(sm *swarm.SwarmManager) {
+
 }

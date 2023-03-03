@@ -20,13 +20,35 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewSwarmManager(lc fx.Lifecycle, logger *zap.Logger) swarm.SwarmManager {
-	ctx := context.Background()
+func NewContext() context.Context {
+	return context.Background()
+}
+
+func NewDockerClient(logger *zap.Logger, ctx context.Context) *client.Client {
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		log.Fatal("Docker client init failed. " + err.Error())
 	}
-	return swarm.NewSwarmManager(ctx, cli)
+	return cli
+}
+
+func NewSwarmManager(lc fx.Lifecycle, ctx context.Context, cli *client.Client, logger *zap.Logger) swarm.SwarmManager {
+	sm := swarm.NewSwarmManager(ctx, cli)
+	lc.Append(fx.Hook{
+		OnStart: func(context.Context) error {
+			if model.Cnf.AdvertiseAddr != "" {
+				sm.InitMaster(model.Cnf.AdvertiseAddr)
+			} else {
+			}
+
+			return nil
+		},
+		OnStop: func(context.Context) error {
+			return nil
+		},
+	})
+
+	return sm
 }
 
 func NewServiceInstance(lc fx.Lifecycle, logger *zap.Logger) (consul.ServiceInstance, error) {
@@ -44,7 +66,6 @@ func NewServiceInstance(lc fx.Lifecycle, logger *zap.Logger) (consul.ServiceInst
 			return si.DeregisterConsul(model.Cnf.ServiceName + hostname)
 		},
 	})
-	fmt.Println(si)
 	return si, nil
 }
 

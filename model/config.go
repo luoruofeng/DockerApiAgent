@@ -49,4 +49,5 @@ type Config struct {
 	HttpWriteOverTime    int    `json:"http_write_over_time"`
 	AgentPathPrefix      string `json:"agent_path_prefix"`
 	IsProduction         bool   `json:"is_production"`
+	AdvertiseAddr        string
 }

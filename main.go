@@ -9,6 +9,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/luoruofeng/DockerApiAgent/cmd"
 	f "github.com/luoruofeng/DockerApiAgent/fx"
 	"github.com/luoruofeng/DockerApiAgent/model"
 
@@ -23,12 +24,16 @@ func main() {
 
 	model.CreateConfig(configFile)
 
+	cmd.Execute()
+
 	app := fx.New(
 		fx.Provide(
 			f.NewServiceInstance,
 			f.NewLogger,
 			f.NewMux,
 			f.NewClient,
+			f.NewContext,
+			f.NewDockerClient,
 			f.NewSwarmManager,
 		),
 		fx.Invoke(f.RegisterLog, f.RegisterConsul, f.RegisterHttp),
