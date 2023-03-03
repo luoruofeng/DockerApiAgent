@@ -15,10 +15,6 @@ import (
 	"go.uber.org/fx"
 )
 
-var (
-	config model.Config
-)
-
 func main() {
 
 	// 定义命令行参数
@@ -33,6 +29,7 @@ func main() {
 			f.NewLogger,
 			f.NewMux,
 			f.NewClient,
+			f.NewSwarmManager,
 		),
 		fx.Invoke(f.RegisterLog, f.RegisterConsul, f.RegisterHttp),
 		//use the same Zap logger for Fx's own logs as well.

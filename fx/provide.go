@@ -4,18 +4,30 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"os"
 	"time"
 
+	"github.com/docker/docker/client"
 	"github.com/gorilla/mux"
 	"github.com/luoruofeng/DockerApiAgent/consul"
+	"github.com/luoruofeng/DockerApiAgent/docker/swarm"
 	"github.com/luoruofeng/DockerApiAgent/model"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
+
+func NewSwarmManager(lc fx.Lifecycle, logger *zap.Logger) swarm.SwarmManager {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		log.Fatal("Docker client init failed. " + err.Error())
+	}
+	return swarm.NewSwarmManager(ctx, cli)
+}
 
 func NewServiceInstance(lc fx.Lifecycle, logger *zap.Logger) (consul.ServiceInstance, error) {
 	si, err := consul.NewServiceInstance(model.Cnf.ConsulAddr, logger)
