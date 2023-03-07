@@ -13,17 +13,33 @@ type SwarmClient interface {
 
 type SwarmManager interface {
 	InitMaster(advertiseAddr string) (string, error)
-	InitWorker(token string) error
+	InitWorker(token string, remoteAddr string) error
+	GetToken() (string, error)
 }
 
 func (m *swarmManager) InitMaster(advertiseAddr string) (string, error) {
-	r := s.InitRequest{AdvertiseAddr: advertiseAddr}
+	r := s.InitRequest{
+		AdvertiseAddr: advertiseAddr,
+		ListenAddr:    "0.0.0.0:2377",
+	}
 	return m.cli.SwarmInit(m.ctx, r)
 }
 
-func (m *swarmManager) InitWorker(token string) error {
-	r := s.JoinRequest{JoinToken: token}
+func (m *swarmManager) InitWorker(token string, remoteAddr string) error {
+	r := s.JoinRequest{
+		JoinToken:   token,
+		ListenAddr:  "0.0.0.0:2377",
+		RemoteAddrs: []string{remoteAddr},
+	}
 	return m.cli.SwarmJoin(m.ctx, r)
+}
+
+func (m *swarmManager) GetToken() (string, error) {
+	s, err := m.cli.SwarmInspect(m.ctx)
+	if err != nil {
+		return "", err
+	}
+	return s.JoinTokens.Manager, nil
 }
 
 type swarmManager struct {

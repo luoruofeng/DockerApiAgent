@@ -3,9 +3,10 @@ module github.com/luoruofeng/DockerApiAgent
 go 1.19
 
 require (
-	github.com/docker/docker v23.0.1+incompatible
+	github.com/docker/docker v20.10.21+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/hashicorp/consul/api v1.19.1
+	github.com/spf13/cobra v1.6.1
 	go.uber.org/fx v1.19.2
 	go.uber.org/zap v1.24.0
 )
@@ -34,7 +35,7 @@ require (
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/opencontainers/image-spec v1.0.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/spf13/cobra v1.6.1 // indirect
+	github.com/sirupsen/logrus v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/dig v1.16.1 // indirect

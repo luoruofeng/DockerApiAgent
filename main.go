@@ -6,6 +6,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log"
 	"time"
 
@@ -21,6 +22,7 @@ func main() {
 	// 定义命令行参数
 	configFile := *flag.String("config", "config.json", "configuration file")
 	flag.Parse()
+	fmt.Println("configFile:" + configFile)
 
 	model.CreateConfig(configFile)
 
@@ -36,7 +38,7 @@ func main() {
 			f.NewDockerClient,
 			f.NewSwarmManager,
 		),
-		fx.Invoke(f.RegisterLog, f.RegisterConsul, f.RegisterHttp),
+		fx.Invoke(f.RegisterLog, f.RegisterConsul, f.RegisterHttp, f.RegisterSwarmManager),
 		//use the same Zap logger for Fx's own logs as well.
 		// fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 		// 	return &fxevent.ZapLogger{Logger: log}

@@ -50,4 +50,6 @@ type Config struct {
 	AgentPathPrefix      string `json:"agent_path_prefix"`
 	IsProduction         bool   `json:"is_production"`
 	AdvertiseAddr        string
+	SwarmToken           string
+	SwarmRemoteAddr      string
 }

@@ -37,8 +37,30 @@ func NewSwarmManager(lc fx.Lifecycle, ctx context.Context, cli *client.Client, l
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			if model.Cnf.AdvertiseAddr != "" {
-				sm.InitMaster(model.Cnf.AdvertiseAddr)
+				//master
+				logger.Info("docker swarm master init!AdvertiseAddr:" + model.Cnf.AdvertiseAddr)
+				resp, err := sm.InitMaster(model.Cnf.AdvertiseAddr)
+				if err != nil {
+					logger.Error(err.Error())
+					panic(err)
+				}
+				logger.Info("Response of docker swarm master init. Node ID:" + resp)
+				token, err := sm.GetToken()
+				if err != nil {
+					logger.Error(err.Error())
+					panic(err)
+				}
+				logger.Info("master TOKEN:" + token)
+			} else if model.Cnf.SwarmToken != "" {
+				//worker
+				logger.Info("docker swarm worker init! Token:" + model.Cnf.SwarmToken + "  remote addr:" + model.Cnf.SwarmRemoteAddr)
+				err := sm.InitWorker(model.Cnf.SwarmToken, model.Cnf.SwarmRemoteAddr)
+				if err != nil {
+					logger.Error(err.Error())
+					panic(err)
+				}
 			} else {
+				//basic
 			}
 
 			return nil

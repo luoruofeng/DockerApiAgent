@@ -54,6 +54,5 @@ func RegisterHttp(mux *mux.Router, c *http.Client, logger *zap.Logger) {
 	mux.HandleFunc("/health", handle.Health)
 }
 
-func RegisterSwarmManager(sm *swarm.SwarmManager) {
-
+func RegisterSwarmManager(sm swarm.SwarmManager) {
 }
