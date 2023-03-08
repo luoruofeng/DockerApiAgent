@@ -4,6 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/luoruofeng/DockerApiAgent/model"
 	"github.com/spf13/cobra"
 )
@@ -18,6 +20,7 @@ var workerCmd = &cobra.Command{
 	Short:   "设置docker swarm为worker节点",
 	Long:    `代理配置本机docker进程为worker模式节点，需要设置master token。`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("worker called")
 		if len(args) < 1 {
 			panic("worker没有设置token")
 		}

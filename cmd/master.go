@@ -4,6 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/luoruofeng/DockerApiAgent/model"
 	"github.com/luoruofeng/DockerApiAgent/util"
 
@@ -18,6 +20,7 @@ var masterCmd = &cobra.Command{
 	Short:   "设置docker swarm为master节点",
 	Long:    `代理配置本机docker进程为master模式节点，需要设置广播地址。`,
 	Run: func(cmd *cobra.Command, args []string) {
+		fmt.Println("master called")
 		if len(args) < 1 {
 			panic("master没有设置advertise-addr")
 		}
