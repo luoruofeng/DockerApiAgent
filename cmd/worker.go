@@ -24,6 +24,7 @@ var workerCmd = &cobra.Command{
 		if swarmRemoteAddr == nil || *swarmRemoteAddr == "" {
 			panic("worker没有设置swarmRemoteAddr")
 		}
+		LoadCnf()
 		model.Cnf.SwarmToken = args[0]
 		model.Cnf.SwarmRemoteAddr = *swarmRemoteAddr
 	},

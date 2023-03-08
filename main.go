@@ -5,27 +5,16 @@ package main
 
 import (
 	"context"
-	"flag"
-	"fmt"
 	"log"
 	"time"
 
 	"github.com/luoruofeng/DockerApiAgent/cmd"
 	f "github.com/luoruofeng/DockerApiAgent/fx"
-	"github.com/luoruofeng/DockerApiAgent/model"
 
 	"go.uber.org/fx"
 )
 
 func main() {
-
-	// 定义命令行参数
-	configFile := *flag.String("config", "config.json", "configuration file")
-	flag.Parse()
-	fmt.Println("configFile:" + configFile)
-
-	model.CreateConfig(configFile)
-
 	cmd.Execute()
 
 	app := fx.New(

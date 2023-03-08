@@ -2,14 +2,14 @@ package model
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 )
 
 var Cnf *Config
 
-func CreateConfig(configFile string) {
+func getPath(configFile string) string {
 	//default value
 	if configFile == "" {
 		absPath, err := filepath.Abs(os.Args[0])
@@ -21,15 +21,27 @@ func CreateConfig(configFile string) {
 		// 拼接文件路径
 		configFile = filepath.Join(dir, "./config.json")
 	}
+	return configFile
+}
 
-	// 加载配置
+func Print(configFile string) {
+	configFile = getPath(configFile)
+	cbs, err := os.ReadFile(configFile)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(cbs))
+}
+
+func CreateConfig(configFile string) {
+	configFile = getPath(configFile)
 	cbs, err := os.ReadFile(configFile)
 	if err != nil {
 		panic(err)
 	}
 	err = json.Unmarshal(cbs, &Cnf)
 	if err != nil {
-		log.Fatalf("failed to load configuration: %s", err)
+		panic(err)
 	}
 }
 

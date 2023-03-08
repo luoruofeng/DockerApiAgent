@@ -25,16 +25,11 @@ var masterCmd = &cobra.Command{
 		if !isIpv4 {
 			panic("master设置advertise-addr必须为IPv4格式")
 		}
+		LoadCnf()
 		model.Cnf.AdvertiseAddr = args[0]
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(masterCmd)
-	// advertiseAddr := masterCmd.Flags().String("advertise-addr", "", "Advertised address (format: <ip|interface>[:port])")
-	// if advertiseAddr == nil || *advertiseAddr == "" {
-	// 	panic("master没有设置advertise-addr")
-	// }
-	// fmt.Println("****************")
-	// fmt.Println(advertiseAddr)
 }
