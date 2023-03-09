@@ -6,7 +6,7 @@
     "http_read_over_time":15,
     "http_write_over_time":15,
     "agent_path_prefix": "/docker",
-    "is_production":true,
+    "is_production":false,
     "consul_addr":"172.17.0.2:8500",
     "consul_health":true,
     "consul_health_interval":"6s",

@@ -13,9 +13,10 @@ RUN go build -o /go/bin/app -v .
 FROM alpine:latest
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 RUN apk update && apk --no-cache add ca-certificates
+COPY --from=builder /go/src/app/docker-entrypoint.sh /docker-entrypoint.sh
 COPY --from=builder /go/bin/app /app
 COPY --from=builder /go/src/app/config.json /da-config.json
 ENV APP_CONFIG /da-config.json
+WORKDIR /
 ENTRYPOINT /app basic -c ${APP_CONFIG}
-#CMD ["basic", "-c", ${APP_CONFIG}]
 EXPOSE 8888

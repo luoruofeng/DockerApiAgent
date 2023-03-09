@@ -15,12 +15,6 @@ touch /da.log
 #使用默认的配置文件启动basic
 docker run -p 8888:8888 -v /da.log:/da.log -v /var/run/docker.sock:/var/run/docker.sock -v somewhere/config.json:/etc/da/config.json -e APP_CONFIG=/etc/da/config.json da:latest
 
-#指定配置文件启动basic
-docker run -p 8888:8888 -v /da.log:/da.log -v /var/run/docker.sock:/var/run/docker.sock -v somewhere/config.json:/etc/da/config.json -e APP_CONFIG=/etc/da/config.json da:latest
-
-#使用默认的配置文件启动master
-docker run -p 8888:8888 -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/config.json:/etc/da/config.json -v /da.log:/da.log -e APP_CONFIG=/etc/da/config.json da:latest master 172.17.0.3 -c /etc/da/config.json
-
 ```
 
 # 启动
@@ -36,4 +30,15 @@ docker run . master 192.168.0.29 -c config.json
 
 #启动worker192.168.0.29是master的内网ip
 go run . worker SWMTKN-1-0e9y07dj5g7yy6tis1mjr9kvwgh45yqtmk08gfp0juwrzpqg38-658m9xmpi62pbkzxv3xgh4x8k -r 192.168.0.29 -c config.json
+```
+
+
+# 其他
+```shell
+#启动consul
+
+docker volume create consul-data
+docker volume create consul-config
+
+docker run -v consul-data:/consul/data -v consul-config:/consul/config -d --name consul -p 8500:8500 -p 8600:8600/udp consul agent -server  -bootstrap-expect=1 -ui -client=0.0.0.0
 ```
