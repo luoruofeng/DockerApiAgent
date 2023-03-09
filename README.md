@@ -1,5 +1,18 @@
 # DockerApiAgent
-DockerApi代理：Unix Socket转TCP Socket。
+Docker可以直接开发TCP访问
+/lib/systemd/system/docker.service文件改
+
+```shell
+ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0: -H fd:// --containerd=/run/containerd/containerd.sock
+```
+
+```shell
+sudo systemctl daemon-reload
+sudo systemctl restart docker.service
+```
+如果不想开放Docker的TCP可以使用这个项目。
+该项目是DockerApi的代理，目的是将Docker的Unix Socket转TCP Socket，提供外部访问。
+并且配有swarm的初始化功能。
 
 
 # 编译
@@ -19,16 +32,16 @@ docker run -p 8888:8888 -v /da.log:/da.log -v /var/run/docker.sock:/var/run/dock
 
 # 启动
 ```shell
-#启动basic
+#启动basic模式。
 docker run . basic -c config.json
 
 #docker swarm leave --force
 
-#启动master 192.168.0.29是内网ip
+#启动master模式。 192.168.0.29是内网ip
 docker run . master 192.168.0.29 -c config.json
 #docker swarm join-token manager
 
-#启动worker192.168.0.29是master的内网ip
+#启动worker模式。 192.168.0.29是master的内网ip
 go run . worker SWMTKN-1-0e9y07dj5g7yy6tis1mjr9kvwgh45yqtmk08gfp0juwrzpqg38-658m9xmpi62pbkzxv3xgh4x8k -r 192.168.0.29 -c config.json
 ```
 
