@@ -1,6 +1,6 @@
 # DockerApiAgent
-Docker可以直接开发TCP访问
-/lib/systemd/system/docker.service文件改
+Docker可以直接开放TCP访问的权限。默认是只开了FD的权限。
+如果需要给Docker开放TCP的权限只需要改/lib/systemd/system/docker.service文件：
 
 ```shell
 ExecStart=/usr/bin/dockerd -H tcp://0.0.0.0: -H fd:// --containerd=/run/containerd/containerd.sock
@@ -11,7 +11,8 @@ sudo systemctl daemon-reload
 sudo systemctl restart docker.service
 ```
 如果不想开放Docker的TCP可以使用这个项目。
-该项目是DockerApi的代理，目的是将Docker的Unix Socket转TCP Socket，提供外部访问。
+
+该项目是DockerApi的代理，目的是将Docker的Unix Socket转TCP Socket，提供外部TCP的访问权限。
 并且配有swarm的初始化功能。
 
 
@@ -43,6 +44,12 @@ docker run . master 192.168.0.29 -c config.json
 
 #启动worker模式。 192.168.0.29是master的内网ip
 go run . worker SWMTKN-1-0e9y07dj5g7yy6tis1mjr9kvwgh45yqtmk08gfp0juwrzpqg38-658m9xmpi62pbkzxv3xgh4x8k -r 192.168.0.29 -c config.json
+```
+
+# 访问方法
+
+```
+curl http://127.0.0.1:8888/docker/containers/json
 ```
 
 
